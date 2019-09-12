@@ -6,8 +6,10 @@
  */
 import { DirFileNameSelection } from '@salesforce/salesforcedx-utils-vscode/out/src/types';
 import { join } from 'path';
-import { DirFileNameWithType, RetrieveDescriber } from '.';
+import { LocalComponent, RetrieveDescriber } from '.';
 import { BrowserNode } from '../../orgBrowser';
+import { SfdxPackageDirectories } from '../../sfdxProject';
+import { MetadataDictionary } from '../../util/metadataDictionary';
 
 abstract class NodeDescriber implements RetrieveDescriber {
   protected node: BrowserNode;
@@ -18,24 +20,33 @@ abstract class NodeDescriber implements RetrieveDescriber {
 
   public abstract buildMetadataArg(): string;
 
-  public abstract gatherOutputLocations(): DirFileNameSelection[];
+  public abstract gatherOutputLocations(): Promise<LocalComponent[]>;
 
-  protected buildOutput(node: BrowserNode): DirFileNameWithType {
+  protected async buildOutput(node: BrowserNode): Promise<LocalComponent[]> {
     const typeNode = node.getAssociatedTypeNode();
-    return {
-      outputdir: join('main', 'default', typeNode.directoryName!),
-      fileName: node.fullName,
-      type: typeNode.fullName
-    };
+    const packageDirectories = await SfdxPackageDirectories.getPackageDirectoryPaths();
+    return packageDirectories.map(directory => ({
+      workspacePath: join(
+        directory,
+        'main',
+        'default',
+        typeNode.directoryName!
+      ),
+      fullName: node.fullName,
+      type: typeNode.fullName,
+      suffix:
+        typeNode.suffix ||
+        MetadataDictionary.getMetadataInfo(typeNode.fullName).suffix
+    }));
   }
 }
 
 class TypeNodeDescriber extends NodeDescriber {
-  public buildMetadataArg(data?: DirFileNameWithType[]): string {
+  public buildMetadataArg(data?: LocalComponent[]): string {
     // data expected as final components to fetch after postchecker prompt
     if (data && data.length < this.node.children!.length) {
       return data.reduce((acc, current, index) => {
-        acc += `${current.type}:${current.fileName}`;
+        acc += `${current.type}:${current.fullName}`;
         if (index < data.length - 1) {
           acc += ',';
         }
@@ -45,8 +56,12 @@ class TypeNodeDescriber extends NodeDescriber {
     return this.node.fullName;
   }
 
-  public gatherOutputLocations(): DirFileNameSelection[] {
-    return this.node.children!.map(child => this.buildOutput(child));
+  public async gatherOutputLocations(): Promise<LocalComponent[]> {
+    const components = [];
+    for (const child of this.node.children!) {
+      components.push(...(await this.buildOutput(child)));
+    }
+    return components;
   }
 }
 
@@ -57,8 +72,8 @@ class ComponentNodeDescriber extends NodeDescriber {
     }`;
   }
 
-  public gatherOutputLocations(): DirFileNameSelection[] {
-    return [this.buildOutput(this.node)];
+  public gatherOutputLocations(): Promise<LocalComponent[]> {
+    return Promise.resolve(this.buildOutput(this.node));
   }
 }
 

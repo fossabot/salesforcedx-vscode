@@ -14,11 +14,7 @@ import {
   DirFileNameSelection,
   ParametersGatherer
 } from '@salesforce/salesforcedx-utils-vscode/out/src/types';
-import {
-  DirFileNameWithType,
-  RetrieveDescriber,
-  RetrieveMetadataTrigger
-} from '.';
+import { LocalComponent, RetrieveDescriber, RetrieveMetadataTrigger } from '.';
 import { nls } from '../../messages';
 import { BrowserNode } from '../../orgBrowser';
 import { TelemetryData } from '../../telemetry';
@@ -43,7 +39,7 @@ const BUNDLE_TYPES = new Set([
 ]);
 
 export class ForceSourceRetrieveExecutor extends SfdxCommandletExecutor<
-  DirFileNameWithType[]
+  LocalComponent[]
 > {
   private describer: RetrieveDescriber;
 
@@ -52,7 +48,7 @@ export class ForceSourceRetrieveExecutor extends SfdxCommandletExecutor<
     this.describer = describer;
   }
 
-  public build(data: DirFileNameWithType[]): Command {
+  public build(data: LocalComponent[]): Command {
     return new SfdxCommandBuilder()
       .withDescription(nls.localize('force_source_retrieve_text'))
       .withLogName('force_source_retrieve')
@@ -64,7 +60,7 @@ export class ForceSourceRetrieveExecutor extends SfdxCommandletExecutor<
 
   protected getTelemetryData(
     success: boolean,
-    response: ContinueResponse<DirFileNameWithType[]>
+    response: ContinueResponse<LocalComponent[]>
   ): TelemetryData {
     const quantities = this.getNumberOfRetrievedTypes(response.data);
     const rows = Object.keys(quantities).map(type => {
@@ -77,7 +73,7 @@ export class ForceSourceRetrieveExecutor extends SfdxCommandletExecutor<
     };
   }
 
-  private getNumberOfRetrievedTypes(data: DirFileNameWithType[]): any {
+  private getNumberOfRetrievedTypes(data: LocalComponent[]): any {
     const quantities: { [key: string]: number } = {};
     data.forEach(selection => {
       const current = quantities[selection.type];

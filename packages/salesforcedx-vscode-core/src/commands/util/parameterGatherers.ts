@@ -1,10 +1,12 @@
 import {
   CancelResponse,
   ContinueResponse,
-  DirFileNameSelection,
   ParametersGatherer
 } from '@salesforce/salesforcedx-utils-vscode/out/src/types';
-import { RetrieveDescriber } from '../forceSourceRetrieveMetadata';
+import {
+  LocalComponent,
+  RetrieveDescriber
+} from '../forceSourceRetrieveMetadata';
 
 export class SimpleGatherer<T> implements ParametersGatherer<T> {
   private input: T;
@@ -22,7 +24,7 @@ export class SimpleGatherer<T> implements ParametersGatherer<T> {
 }
 
 export class RetrieveComponentOutputGatherer
-  implements ParametersGatherer<DirFileNameSelection[]> {
+  implements ParametersGatherer<LocalComponent[]> {
   private describer: RetrieveDescriber;
 
   constructor(describer: RetrieveDescriber) {
@@ -30,8 +32,11 @@ export class RetrieveComponentOutputGatherer
   }
 
   public async gather(): Promise<
-    CancelResponse | ContinueResponse<DirFileNameSelection[]>
+    CancelResponse | ContinueResponse<LocalComponent[]>
   > {
-    return { type: 'CONTINUE', data: this.describer.gatherOutputLocations() };
+    return {
+      type: 'CONTINUE',
+      data: await this.describer.gatherOutputLocations()
+    };
   }
 }
