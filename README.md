@@ -3,6 +3,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/ek3pftmawcabebac/branch/develop?svg=true)](https://ci.appveyor.com/project/forcedotcom/salesforcedx-vscode/branch/develop)
 [![Dev Dependencies](https://david-dm.org/forcedotcom/salesforcedx-vscode/dev-status.svg)](contributing/dependencies.md)
 [![codecov](https://codecov.io/gh/forcedotcom/salesforcedx-vscode/branch/develop/graph/badge.svg)](https://codecov.io/gh/forcedotcom/salesforcedx-vscode)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fforcedotcom%2Fsalesforcedx-vscode.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fforcedotcom%2Fsalesforcedx-vscode?ref=badge_shield)
 
 ## Introduction
 
@@ -40,3 +41,7 @@ If you are interested in building the extensions locally, please take a look at 
 You can find more information about developing Salesforce Extensions for VS Code in the [docs](docs) folder. If the docs don’t cover what you are looking for, please feel free to open an issue.
 
 For information about using the extensions, consult the README.md file for each package.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fforcedotcom%2Fsalesforcedx-vscode.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fforcedotcom%2Fsalesforcedx-vscode?ref=badge_large)
